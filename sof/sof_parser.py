@@ -22,9 +22,11 @@ class SOFParser(Parser):
         soup = BeautifulSoup(page.content, 'html.parser')
         mydivs = soup.find_all("div", {"class": "answer"})
         question_div = soup.find("div", {"class": "question"})
+        if not question_div:
+            return None
         question_parts = question_div.find_all("div", {"class": "s-prose js-post-body"})
         answers = []
-        question = " ".join([q.getText() for q in question_parts])
+        question = " ".join([q.getText() for q in question_parts if q != "\r\n"])
         for answer in mydivs:
             # answers.append(answer.getText())
             answer_parts = answer.find_all("div", {"class": "s-prose js-post-body"})

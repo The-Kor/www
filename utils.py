@@ -1,10 +1,12 @@
 from parser_factory import ParserFactory
 import sys
+from termcolor import colored
 from googlesearch import search
 import os
 from utils_objects import Site
 import webbrowser
 import re
+from tabulate import tabulate
 
 max_results_per_site = 5
 
@@ -60,7 +62,7 @@ def get_run_info(args) -> dict:
     input_cmd = input_cmd.replace('"', "")
     error_str = error_str.replace("'", "")
     error_str = error_str.replace('"', "")
-    return dict(command=input_cmd, error=error_str, sites=sites_to_search)
+    return dict(command=input_cmd, error=error_str)
 
 
 def get_query(cmd, error):
@@ -68,10 +70,9 @@ def get_query(cmd, error):
     return query
 
 
-def run_search(site, cmd, error):
-    query = get_query(cmd, error)
+def run_search(site, query):
     query = "site: {} {}".format(site.url, query)
-    print(query)
+    print(colored("Searching: {}".format(query), "green"))
     search_generator = search(query)
     return search_generator
 
@@ -93,12 +94,20 @@ def print_thread_data(thread):
     if not thread:
         print("Oops! no solutions found")
         return
-    print("Thread from {}".format(thread.url))
+    print("Thread from {}\n*****************************************\n".format(thread.url))
     print(thread.question)
+    print("**********************************************\n")
 
 
 def menu_help():
-    print("HELP")
+    print("{} - next answer in thread".format(colored("na","green")))
+    print("{} - next thread".format(colored("n","green")))
+    print("{} - open Google in browser".format(colored("g","green")))
+    print("{} - open current thread in browser".format(colored("o","green")))
+    print("{} - show searched command".format(colored("cmd","green")))
+    print("{} - show searched error".format(colored("err","green")))
+    print("{} - edit query".format(colored("e","green")))
+    print("{} - exit".format(colored("x","green")))
 
 
 def menu_open_answer_in_web(thread):
@@ -109,8 +118,8 @@ def menu_open_answer_in_web(thread):
 
 
 def menu_next_answer_in_thread(thread, answer_idx):
-    if answer_idx < len(thread.answers) and thread:
-        print(thread.answers[answer_idx])
+    if thread and answer_idx < len(thread.answers):
+        print(tabulate([[thread.answers[answer_idx]]]))
         return True
     return False
 
@@ -120,13 +129,12 @@ def menu_open_google_in_web(query):
 
 
 def run(run_args):
-    site_parsers = ParserFactory.generate_parser_objects(run_args['sites'])
-    query = get_query(run_args['command'], run_args['error'])
+    site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
+    query = run_args['query']
     site_results = [
-        parser.parse_links(run_search(parser.site.value, run_args['command'], run_args['error']), parser.site.value.url)
+        parser.parse_links(run_search(parser.site.value, run_args['query']), parser.site.value.url)
         for parser in site_parsers]
     results = all_sites_results(site_results)
-
     curr_result = next(results)
     print_thread_data(curr_result)
     answer_idx = 0
@@ -134,7 +142,6 @@ def run(run_args):
         answer_idx += 1
     else:
         print("No more answers in this thread..")
-
     while (True):
         # what do you want to do?
         user_input = input("please choose next action (input 'h' for help)")
