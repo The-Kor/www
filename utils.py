@@ -5,15 +5,24 @@ max_results_per_site = 5
 
 
 def is_not_warning_filter(txt):
+    '''
+    check if txt is a line starting with 'warning'
+    '''
     return not txt.lower().lstrip().startswith("warning")
 
 
 def is_not_param_filter(txt):
+    '''
+    check if txt is a 'param' line of the form XXX = YYY
+    '''
     pattern = "\s*[^\s]+\s*=\s*[^\s]+\s*$"
     return not re.match(pattern, txt)
 
 
 def get_basename_if_path(txt):
+    '''
+    returns the basename of a path, when txt is a path
+    '''
     full_path = txt
     if "/" in txt:
         path_no_base_name = os.path.join(*txt.split("/")[:-1])
@@ -25,12 +34,18 @@ def get_basename_if_path(txt):
 
 
 def clean_command(cmd):
+    '''
+    cleans the command from paths
+    '''
     command_parts = cmd.split(" ")
     command_parts = map(get_basename_if_path, command_parts)
     return " ".join(command_parts)
 
 
 def clean_error(error_msg):
+    '''
+    clean the error by filters
+    '''
     error_rows = error_msg.split("\n")
     error_rows = list(filter(is_not_warning_filter, error_rows))
     error_rows = list(filter(is_not_param_filter, error_rows))
@@ -46,6 +61,9 @@ def clean_error(error_msg):
 
 
 def get_run_info(args) -> dict:
+    '''
+    cleaning the input command and error and returning them
+    '''
     input_cmd = clean_command(" ".join(args[1:-1]))
     input_err_file = args[-1]
     error_str = clean_error(" ".join(open(input_err_file).readlines()))
@@ -57,15 +75,24 @@ def get_run_info(args) -> dict:
 
 
 def get_query(cmd, error):
+    '''
+    compose a query out of command and error
+    '''
     query = "{} {}".format(cmd, error)
     return query
 
 
 def build_google_link(query):
+    '''
+    returns the pre-searched google link for the given query
+    '''
     template = "http://www.google.com/search?q="
     return template + query.replace(" ", "+")
 
 
 def strip_string(string):
+    '''
+    Normalizing a "paragraph" string
+    '''
     return re.sub("[\r\n\t\s]*\n[\r\n\t\s]*\n[\r\n\t\s]*", "\n\n", string.strip("[ \t\n\r]"))
     # return string.strip("[ \t\n\r]")
