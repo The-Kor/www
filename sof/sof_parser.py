@@ -32,7 +32,7 @@ class SOFParser(Parser):
         if not SOFParser.is_valid_link(link):
             return None
         page = requests.get(link)
-        soup = BeautifulSoup(page.content, 'html.parser')
+        soup_obj = BeautifulSoup(page.content, 'html.parser')
         question = self.parse_question(soup_obj)
         if not question:
             return None
