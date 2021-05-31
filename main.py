@@ -14,6 +14,9 @@ sites_to_search = [Site.SOF]
 
 
 def menu_open_answer_in_web(thread):
+    """
+    Opens the thread in the user's browsers
+    """
     if thread:
         webbrowser.open(thread.url)
     else:
@@ -21,6 +24,9 @@ def menu_open_answer_in_web(thread):
 
 
 def menu_next_answer_in_thread(thread: Thread, answer_idx):
+    """
+    Prints the next answer in the thread, returns True if such answer exists, other False
+    """
     if thread and answer_idx < len(thread.answers):
         TerminalPrinter.print_answer(thread.answers[answer_idx])
         return True
@@ -28,18 +34,27 @@ def menu_next_answer_in_thread(thread: Thread, answer_idx):
 
 
 def menu_open_google_in_web(query):
+    """
+    Opens the google search page on the given query in the user's browsers
+    """
     webbrowser.open(build_google_link(query))
 
 
 def get_results_generator(site, query):
+    """
+    Return a generator of results(Threads) of the given site to the given query
+    """
     query = "site: {} {}".format(site.url, query)
     TerminalPrinter.print_query(query)
     search_generator = search(query)
     return search_generator
 
 
-def all_sites_results_generator(site_results):
-    for site in site_results:
+def all_sites_results_generator(site_generators):
+    """
+    A general generator of threads to all given site generators
+    """
+    for site in site_generators:
         for result in site:
             yield result
     while (True):
@@ -47,12 +62,18 @@ def all_sites_results_generator(site_results):
 
 
 def menu_update_query(run_args):
+    """
+    Asks the user for input a new query, updates the run_args given dict
+    """
     run_args['command'] = input("input command:")
     run_args['error'] = input("input error:")
     run_args['query'] = utils.get_query(run_args['command'], run_args['error'])
 
 
 def run(run_args):
+    """
+    Runs the main menu loop according to the given run_args dict
+    """
     site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
     query = run_args['query']
     site_results_generators = [
@@ -103,19 +124,6 @@ def run(run_args):
             return run_args
         elif user_input == "x":
             exit(0)
-    # show help menu
-
-    # open answer in web
-    # next answer (next answer in thread)
-    # next result (break inner loop)
-    # google it for me
-    # show command
-    # show error
-    # edit query and run again:
-    #     -set command (enter for same)
-    #     -set error (enter for same)
-    # search google free text & abort
-    # abort (exit(0))
 
 
 if __name__ == '__main__':

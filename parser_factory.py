@@ -6,6 +6,9 @@ class ParserFactory:
 
     @staticmethod
     def generate_parser_objects(sites=(Site.SOF,)) -> list:
+        """
+        Generates a list of parses according to the given sites list
+        """
         site_parsers = []
         for site in sites:
             if site == Site.SOF:
