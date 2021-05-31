@@ -1,16 +1,7 @@
-from parser_factory import ParserFactory
-import sys
-from termcolor import colored
-from googlesearch import search
 import os
-from utils_objects import Site
-import webbrowser
 import re
-from tabulate import tabulate
 
 max_results_per_site = 5
-
-sites_to_search = [Site.SOF]
 
 
 def is_not_warning_filter(txt):
@@ -70,120 +61,11 @@ def get_query(cmd, error):
     return query
 
 
-def run_search(site, query):
-    query = "site: {} {}".format(site.url, query)
-    print(colored("Searching: {}".format(query), "green"))
-    search_generator = search(query)
-    return search_generator
-
-
 def build_google_link(query):
     template = "http://www.google.com/search?q="
     return template + query.replace(" ", "+")
 
 
-def all_sites_results(site_results):
-    for site in site_results:
-        for result in site:
-            yield result
-    while (True):
-        yield None
-
-
-def print_thread_data(thread):
-    if not thread:
-        print("Oops! no solutions found")
-        return
-    print("Thread from {}\n*****************************************\n".format(thread.url))
-    print(thread.question)
-    print("**********************************************\n")
-
-
-def menu_help():
-    print("{} - next answer in thread".format(colored("na","green")))
-    print("{} - next thread".format(colored("n","green")))
-    print("{} - open Google in browser".format(colored("g","green")))
-    print("{} - open current thread in browser".format(colored("o","green")))
-    print("{} - show searched command".format(colored("cmd","green")))
-    print("{} - show searched error".format(colored("err","green")))
-    print("{} - edit query".format(colored("e","green")))
-    print("{} - exit".format(colored("x","green")))
-
-
-def menu_open_answer_in_web(thread):
-    if thread:
-        webbrowser.open(thread.url)
-    else:
-        print("No more threads for this query, try searching edit the query using 'e'")
-
-
-def menu_next_answer_in_thread(thread, answer_idx):
-    if thread and answer_idx < len(thread.answers):
-        print(tabulate([[thread.answers[answer_idx]]]))
-        return True
-    return False
-
-
-def menu_open_google_in_web(query):
-    webbrowser.open(build_google_link(query))
-
-
-def run(run_args):
-    site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
-    query = run_args['query']
-    site_results = [
-        parser.parse_links(run_search(parser.site.value, run_args['query']), parser.site.value.url)
-        for parser in site_parsers]
-    results = all_sites_results(site_results)
-    curr_result = next(results)
-    print_thread_data(curr_result)
-    answer_idx = 0
-    if menu_next_answer_in_thread(curr_result, answer_idx):
-        answer_idx += 1
-    else:
-        print("No more answers in this thread..")
-    while (True):
-        # what do you want to do?
-        user_input = input("please choose next action (input 'h' for help)")
-        if user_input == "h":
-            menu_help()
-        elif user_input == "na":
-            if menu_next_answer_in_thread(curr_result, answer_idx):
-                answer_idx += 1
-            else:
-                print("No more answers in this thread..")
-        elif user_input == "n":
-            curr_result = next(results)
-            print_thread_data(curr_result)
-            answer_idx = 0
-            if menu_next_answer_in_thread(curr_result, answer_idx):
-                answer_idx += 1
-            else:
-                print("No more answers in this thread..")
-        elif user_input == "o":
-            menu_open_answer_in_web(curr_result)
-        elif user_input == "g":
-            menu_open_google_in_web(query)
-        elif user_input == "cmd":
-            print(run(['command']))
-        elif user_input == "err":
-            print(run(['error']))
-        elif user_input == "e":
-            run_args['command'] = input("input command:")
-            run_args['error'] = input("input error:")
-            return run_args
-        elif user_input == "x":
-            exit(0)
-    # show help menu
-
-    # open answer in web
-    # next answer (next answer in thread)
-    # next result (break inner loop)
-    # google it for me
-    # show command
-    # show error
-    # edit query and run again:
-    #     -set command (enter for same)
-    #     -set error (enter for same)
-    # search google free text & abort
-    # abort (exit(0))
+def strip_string(string):
+    return re.sub("[\r\n\t\s]*\n[\r\n\t\s]*\n[\r\n\t\s]*", "\n\n", string.strip("[ \t\n\r]"))
+    # return string.strip("[ \t\n\r]")

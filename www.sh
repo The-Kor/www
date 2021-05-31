@@ -1,9 +1,15 @@
 #!/bin/bash
 run_cmd(){
+      if [ ! -n "$1" ]
+      then
+        python main.py e
+      fi
       case "$1" in
-        -q )
+        --q )
         python main.py q "${@:2}"
-
+        ;;
+        --h )
+        python main.py h
         ;;
         *)
         "$@" 2>tmp_err.txt
@@ -11,5 +17,5 @@ run_cmd(){
         ;;
     esac
 }
-
+#TODO add "www" support - ask for query in menu
 run_cmd "$@"
