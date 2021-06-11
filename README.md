@@ -11,6 +11,10 @@
     * ./www.sh <command to run>
     * ./www.sh --h (for help)
 
+
+# Demo
+![image](https://user-images.githubusercontent.com/44695990/121691478-b47c0600-cacf-11eb-9f6c-6bed425547c1.png)
+
 # Error parsing 
     When running the tool with a given command the tool parses the command and the error message (from stderr) and runs a search
 
