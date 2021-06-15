@@ -6,7 +6,11 @@
 git clone <www_repo_link>
 pip install -r requirements.txt
 
-# How to run -     
+# Windows Users
+please install WSL in order to be able to run this project. 
+for more information: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+# How to run 
   ## 3 options
     * ./www.sh (no arguments)
     * ./www.sh --q <query to search>
