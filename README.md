@@ -2,8 +2,10 @@
 ### What Went Wrong is a Linux tool that helps you get online assistance right from the terminal
 
 # Installation - 
-    git clone <www_repo_link>
+    git clone https://github.com/The-Kor/www
+    cd ./www
     pip install -r requirements.txt
+    
 # How to run -     
   ## 3 options
     * ./www.sh (no arguments)
@@ -12,7 +14,7 @@
     * ./www.sh --h (for help)
 
 # Error parsing 
-    When running the tool with a given command the tool parses the command and the error message (from stderr) and runs a search
+When running the tool with a given command the tool parses the command and the error message (from stderr) and runs a search
 
 # Web parsing
-    Currently we support only StackOverFlow, adding support to new website can be done using implementation to Parser class
+Currently we support only StackOverFlow, adding support to new website can be done using implementation to Parser class
