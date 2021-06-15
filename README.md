@@ -2,7 +2,7 @@
 ### What Went Wrong is a Linux tool that helps you get online assistance right from the terminal
 
 # Installation - 
-    git clone <www_repo_link>
+    git clone https://github.com/The-Kor/www.git
     pip install -r requirements.txt
 # How to run -     
   ## 3 options
