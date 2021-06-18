@@ -1,39 +1,62 @@
-# WWW - What Went Wrong
-WWW is a Linux tool that helps you get online assistance right from the terminal.
+# WWW
+### What Went Wrong is a Linux tool that helps you get online assistance right from the terminal
 
 ## Table of Contents  
-- [Installation](#Installation)  
+- [Installation](#installation)  
 - [How to run](#run)
-- [Error parsing](#err)  
-- [Web parsing](#web)
-- [How To Contribute?](#howtocontribute)  
+- [Web parsing](#web_parsing)
+- [How To Contribute?](#contribute)  
 
-### Installation - 
-    git clone <www_repo_link>
-    pip install -r requirements.txt
+<a name="installation"/>
+
+# Installation 
+1. Clone the repository via `git clone <www_repo_link>`
+    
+2. (Recommended) setup a Python virtual environment as follows:
+    
+```shell
+   python3 -m venv venv
+   . ./venv/bin/activate
+```
+    
+3. Install the dependencies via `pip install -r requirements.txt`
+4. Make the shell script executable via `chmod +x ./www.sh`
 
 <a name="run"/>
 
-### How to run -     
-#### 3 options
-* ./www.sh (no arguments)
-* ./www.sh --q <query to search>
-* ./www.sh <command to run>
-* ./www.sh --h (for help)
+# How to run
 
-<a name="err"/>
+To see all available options for CLI, type `./www.sh --h`
 
-#### Error parsing 
-    When running the tool with a given command the tool parses the command and the error message (from stderr) and runs a search
+There are mainly 3 ways of running this tool:
 
-<a name="web"/>
+* Interactively, by running 
 
-#### Web parsing
-    Currently we support only StackOverFlow, adding support to new website can be done using implementation to Parser class
+  `./www.sh` (no arguments)
 
-<a name="howtocontribute"/>
+* By supplying a query directly:
 
-### How to Contribute
+  `./www.sh --q <query to search>`
+ 
+   For example `./www.sh --q no such file`
+
+* By executing a terminal command:
+
+  `./www.sh <command to run>`
+  
+  This will execute the command and use the resulting stderr, along with the
+  command itself as the query.
+
+  For example, `./www.sh python demo_error_1.py`
+
+<a name="web_parsing"/>
+
+# Web parsing
+Currently we support only StackOverFlow, adding support to new website can be done by implementing the `Parser` class and updating `parser_factory.py`
+
+<a name="contribute"/>
+
+# How to Contribute
 * Fork this repo.
 * Open a new branch (locally) and start working on it.
 * Push it.
