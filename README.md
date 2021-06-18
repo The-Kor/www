@@ -1,5 +1,6 @@
 # WWW
 ### What Went Wrong is a Linux tool that helps you get online assistance right from the terminal
+[![License](https://img.shields.io/badge/License-MIT-red.svg)](https://www.mit.edu/~amini/LICENSE.md)
 
 ## Table of Contents  
 - [Installation](#installation)  
@@ -61,3 +62,7 @@ Currently we support only StackOverFlow, adding support to new website can be do
 * Open a new branch (locally) and start working on it.
 * Push it.
 * Create a new pull request. (Thank you! ❤️)
+####    Notes for contributors:
+*   This tool requires [Python 3](https://www.python.org/downloads/) and [pip](https://pypi.org/project/pip/) to run.
+*   This tool requires an internet connection to work properly.
+*   Every change in the code, requires a proper and well documented pull request, which will only be accepted after being reviewed and approved by all main authors of the app.
