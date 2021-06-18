@@ -11,6 +11,8 @@
 <a name="installation"/>
 
 # Installation 
+* Windows users - please install WSL in order to be able to run this project, for more info click [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
 1. Clone the repository via `git clone <www_repo_link>`
     
 2. (Recommended) setup a Python virtual environment as follows:
