@@ -63,6 +63,14 @@ class TerminalPrinter:
         print(colored("*" * 100, "grey", attrs=["bold"]))
 
     @staticmethod
+    def print_no_thead_selected():
+        pass
+
+    @staticmethod
+    def print_titles(links_dict, titles_idx_range):
+        pass
+
+    @staticmethod
     def print_help_menu():
         """
         Prints the help menu

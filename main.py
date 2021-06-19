@@ -13,6 +13,17 @@ from utils_objects import Site, Thread
 sites_to_search = [Site.SOF]
 
 
+def print_thread_by_index(cur_thread_idx, links_dict):
+    curr_thread = links_dict.items()[cur_thread_idx][1]
+    TerminalPrinter.print_question(curr_thread)
+    answer_idx = 0
+    if menu_next_answer_in_thread(curr_thread, answer_idx):
+        answer_idx += 1
+    else:
+        print("No more answers in this thread..\nEnter 'n' for next thread")
+    return answer_idx
+
+
 def menu_open_answer_in_web(thread):
     """
     Opens the thread in the user's browsers
@@ -50,6 +61,13 @@ def get_results_generator(site, query):
     return search_generator
 
 
+def get_links_by_query(query):
+    # Runs search on all sites_to_search and returns a OrderedDict of links
+    # validate that the link is from a known source
+    # (of num_of_links size) (value is Result instance)
+    pass
+
+
 def all_sites_results_generator(site_generators):
     """
     A general generator of threads to all given site generators
@@ -76,43 +94,59 @@ def run(run_args):
     """
     site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
     query = run_args['query']
-    site_results_generators = [
-        parser.parse_links(get_results_generator(parser.site.value, run_args['query']))
-        for parser in site_parsers]
-    results_generator = all_sites_results_generator(site_results_generators)
-    curr_result = next(results_generator)
+    ############
+    cur_thread_idx = None
     answer_idx = 0
-    if curr_result:
-        TerminalPrinter.print_question(curr_result)
-        if menu_next_answer_in_thread(curr_result, answer_idx):
-            answer_idx += 1
-        else:
-            print("No more answers in this thread..")
-    else:
-        print("No more threads for this query..\nEnter 'e' to edit your query")
-    while (True):
-        # what do you want to do?
+    titles_idx_range = range(0, 5)  # TODO 5 SHOULD BE CONST
+    links_dict = get_links_by_query(query)
+    TerminalPrinter.print_titles(links_dict, titles_idx_range)  # Print instructions for thread selection
+    ########
+    while True:
         user_input = input(colored("please choose next action (input {} for help)", "green").format("'h'"))
         if user_input == "h":
             TerminalPrinter.print_help_menu()
         elif user_input == "na":
-            if menu_next_answer_in_thread(curr_result, answer_idx):
+            if cur_thread_idx is None:
+                TerminalPrinter.print_no_thead_selected()
+                continue
+            curr_thread = links_dict.items()[cur_thread_idx][1]
+            if menu_next_answer_in_thread(curr_thread, answer_idx):
                 answer_idx += 1
             else:
                 print("No more answers in this thread..\nEnter 'n' for next thread")
-        elif user_input == "n":
-            curr_result = next(results_generator)
-            if curr_result:
-                TerminalPrinter.print_question(curr_result)
-                answer_idx = 0
-                if menu_next_answer_in_thread(curr_result, answer_idx):
-                    answer_idx += 1
-                else:
-                    print("No more answers in this thread..\nEnter 'n' for next thread")
+        elif user_input.isnumeric() and int(user_input) in range(len(links_dict)):
+            cur_thread_idx = int(user_input)
+            answer_idx = print_thread_by_index(cur_thread_idx, links_dict)
+        elif user_input == "nt":
+            if cur_thread_idx is None:
+                TerminalPrinter.print_no_thead_selected()
+                continue
+            if cur_thread_idx < len(links_dict) - 1:
+                cur_thread_idx += 1
+                answer_idx = print_thread_by_index(cur_thread_idx, links_dict)
             else:
                 print("No more threads for this query..\nEnter 'e' to edit your query")
+        elif user_input == "pt":
+            if cur_thread_idx is None:
+                TerminalPrinter.print_no_thead_selected()
+                continue
+            if cur_thread_idx > 0:
+                cur_thread_idx -= 1
+                answer_idx = print_thread_by_index(cur_thread_idx, links_dict)
+            else:
+                print("No more threads for this query..\nEnter 'e' to edit your query")
+        elif user_input == "n":
+            # Implement threads range navigation (change the current range to next one)
+            pass
+        elif user_input == "p":
+            # Implement threads range navigation (change the current range to previous one)
+            pass
         elif user_input == "o":
-            menu_open_answer_in_web(curr_result)
+            if cur_thread_idx is None:
+                TerminalPrinter.print_no_thead_selected()
+                continue
+            curr_thread = links_dict.items()[cur_thread_idx][1]
+            menu_open_answer_in_web(curr_thread)
         elif user_input == "g":
             menu_open_google_in_web(query)
         elif user_input == "cmd":
@@ -122,8 +156,10 @@ def run(run_args):
         elif user_input == "e":
             menu_update_query(run_args)
             return run_args
-        elif user_input == "x":
-            exit(0)
+        elif user_input.startswith("x"):
+            sys.exit()
+        else:
+            print("Invalid input")
 
 
 if __name__ == '__main__':
@@ -138,5 +174,8 @@ if __name__ == '__main__':
     else:
         run_args = utils.get_run_info(sys.argv)
         run_args['query'] = utils.get_query(run_args['command'], run_args['error'])
-    while (True):
-        run(run_args)
+    while True:
+        try:
+            run(run_args)
+        except SystemExit:
+            sys.exit()
