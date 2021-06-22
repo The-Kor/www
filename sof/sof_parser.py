@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from question import *
 from answer import *
+from utils_objects import Thread
+from utils import max_results_per_site, strip_string
 
 
 class SOFParser(Parser):
@@ -19,7 +21,7 @@ class SOFParser(Parser):
             parsed_thread = self.parse_link(link)
             if parsed_thread:
                 yield parsed_thread
-            if links_counter >= utils.max_results_per_site:
+            if links_counter >= max_results_per_site:
                 break
 
     def parse_link(self, link):
@@ -53,8 +55,8 @@ class SOFParser(Parser):
             return None
         question_attr_parts = question_attr_div.find_all("div")
         for part in question_attr_parts:
-            key = utils.strip_string(part.find("span").getText())
-            attributes[key] = utils.strip_string(part.getText().replace(key, ""))
+            key = strip_string(part.find("span").getText())
+            attributes[key] = strip_string(part.getText().replace(key, ""))
         return attributes
 
     def parse_answers(self, soup_obj):
@@ -70,7 +72,7 @@ class SOFParser(Parser):
             answer_data = ""
             for part in answer_parts:
                 answer_data += part.getText()
-            answer_data = utils.strip_string(answer_data)
+            answer_data = strip_string(answer_data)
             answers.append(Answer(id, answer_data, attr))
         return answers
 
@@ -85,7 +87,7 @@ class SOFParser(Parser):
         question_div = soup_obj.find("div", {"class": "question"})
         attributes['score'] = question_div.get("data-score")
         question_parts = question_div.find_all("div", {"class": "s-prose js-post-body"})
-        question_data = utils.strip_string("".join([q.getText() for q in question_parts]))
+        question_data = strip_string("".join([q.getText() for q in question_parts]))
 
         question = Question(question_title, question_data, attributes)
         return question

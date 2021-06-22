@@ -4,16 +4,18 @@ import webbrowser
 from googlesearch import search
 from termcolor import colored
 
-from parser_factory import ParserFactory
+# from parser_factory import ParserFactory
 from terminal_printer import TerminalPrinter
-from utils import build_google_link, sites_to_search, is_supported_link, get_parser_class_by_link, get_query, \
-    get_run_info
+from utils import build_google_link, \
+    get_run_info, get_query, get_parser_of_link, is_link_of_site
+# from utils_objects import Site
 from utils_objects import Thread
 from collections import OrderedDict
 from result import Result
+from sof.sof_parser import SOFParser
 
 max_num_of_results = 20
-
+parsers = [SOFParser]
 
 def print_thread_by_index(cur_thread_idx, links_dict):
     """
@@ -62,7 +64,7 @@ def get_results_generator(site, query):
     """
     Return a generator of results(Threads) of the given site to the given query
     """
-    query = "site: {} {}".format(site.url, query)
+    query = "site: {} {}".format(site.parser.site_url, query)
     TerminalPrinter.print_query(query)
     search_generator = search(query)
     return search_generator
@@ -75,7 +77,7 @@ def get_links_by_query(query):
     Each link is added to orderedDict and initialized with empty Result instance.
     :return: Ordered dict with links as keys and Result instances as value
     """
-    sites_str = "|".join([s.value.url for s in sites_to_search])
+    sites_str = "|".join([parser.site_url for parser in parsers])
     query_to_search = "site: {} {}".format(sites_str, query)
     search_generator = search(query_to_search)
     links_dict = OrderedDict()
@@ -84,9 +86,9 @@ def get_links_by_query(query):
         if not cur_link:
             # Generator is out of links, break the outer while
             break
-        elif is_supported_link(cur_link):
-            parser_class = get_parser_class_by_link(cur_link)
-            links_dict[cur_link] = Result(cur_link, parser_class)
+        parser = get_parser_of_link(cur_link, parsers)
+        if parser:
+            links_dict[cur_link] = Result(cur_link, parser)
     return links_dict
 
 
@@ -107,14 +109,14 @@ def menu_update_query(run_args):
     """
     run_args['command'] = input("input command:")
     run_args['error'] = input("input error:")
-    run_args['query'] = utils.get_query(run_args['command'], run_args['error'])
+    run_args['query'] = get_query(run_args['command'], run_args['error'])
 
 
 def run(run_args):
     """
     Runs the main menu loop according to the given run_args dict
     """
-    site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
+    # site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
     query = run_args['query']
     ############
     cur_thread_idx = None

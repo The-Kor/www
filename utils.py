@@ -1,11 +1,11 @@
 import os
 import re
-from utils_objects import Site
 
 max_results_per_site = 5
-
-sites_to_search = [Site.SOF]
-
+# from the link ""http://www.stackoverflow.com/questions/1234567/blah-bla""
+# group(1) -> 'stackoverflow.com'
+# group(0) -> 'http://www.stackoverflow.com'
+url_pattern = re.compile("^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)")
 
 def is_not_warning_filter(txt):
     '''
@@ -101,18 +101,22 @@ def strip_string(string):
     # return string.strip("[ \t\n\r]")
 
 
-def get_parser_class_by_link(link):
-    """
-    Returns the parser class that matches the given link, if the link does not match parser -returns None
-    """
-    for site in sites_to_search:
-        if site.value.url in link:
-            return site.value.parser
+def is_link_of_site(link, site_name):
+    '''
+    :param link: a full link url
+    :param site_name: name of site (ex: 'github.com')
+    :return: True is the link is of this site, False otherwise
+    '''
+    return site_name in url_pattern.match(link).group(0)
+
+
+def get_parser_of_link(link, parsers):
+    '''
+    :param link: a full link url
+    :param parsers: list of sites to match to this link
+    :return: the parser from the list matches this link, None if no parser matches
+    '''
+    for parser in parsers:
+        if is_link_of_site(link, parser.site_url):
+            return parser
     return None
-
-
-def is_supported_link(link):
-    for site in sites_to_search:
-        if site.value.url in link:
-            return True
-    return False
