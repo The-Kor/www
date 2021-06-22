@@ -1,6 +1,4 @@
-import utils
 from site_parser import Parser
-from utils_objects import Thread, Site
 import requests
 from bs4 import BeautifulSoup
 from question import *
@@ -8,10 +6,9 @@ from answer import *
 
 
 class SOFParser(Parser):
-    site = Site.SOF
-    site_url = site.value.url
+    site_url = "stackoverflow.com"
 
-    def parse_links(self, links) -> Thread:
+    def parse_links(self, links):
         """
         A generator that yields a Thread instance for every link in the given list
         """

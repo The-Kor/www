@@ -4,16 +4,23 @@ import webbrowser
 from googlesearch import search
 from termcolor import colored
 
-import utils
 from parser_factory import ParserFactory
 from terminal_printer import TerminalPrinter
-from utils import build_google_link
-from utils_objects import Site, Thread
+from utils import build_google_link, sites_to_search, is_supported_link, get_parser_class_by_link, get_query, \
+    get_run_info
+from utils_objects import Thread
+from collections import OrderedDict
+from result import Result
 
-sites_to_search = [Site.SOF]
+max_num_of_results = 20
 
 
 def print_thread_by_index(cur_thread_idx, links_dict):
+    """
+    This function gets the ordered links_dict and a specific idx and prints the question
+    of the Thread and the first answer.
+    :return: The next answer index of the given Thread's index.
+    """
     curr_thread = links_dict.items()[cur_thread_idx][1]
     TerminalPrinter.print_question(curr_thread)
     answer_idx = 0
@@ -62,10 +69,25 @@ def get_results_generator(site, query):
 
 
 def get_links_by_query(query):
-    # Runs search on all sites_to_search and returns a OrderedDict of links
-    # validate that the link is from a known source
-    # (of num_of_links size) (value is Result instance)
-    pass
+    """
+    This function builds a query to search from the given query and the site_to_search urls.
+    The function runs google search on the query and takes up to max_num_of_results links from the generator.
+    Each link is added to orderedDict and initialized with empty Result instance.
+    :return: Ordered dict with links as keys and Result instances as value
+    """
+    sites_str = "|".join([s.value.url for s in sites_to_search])
+    query_to_search = "site: {} {}".format(sites_str, query)
+    search_generator = search(query_to_search)
+    links_dict = OrderedDict()
+    while len(links_dict) < max_num_of_results:
+        cur_link = next(search_generator)
+        if not cur_link:
+            # Generator is out of links, break the outer while
+            break
+        elif is_supported_link(cur_link):
+            parser_class = get_parser_class_by_link(cur_link)
+            links_dict[cur_link] = Result(cur_link, parser_class)
+    return links_dict
 
 
 def all_sites_results_generator(site_generators):
@@ -172,8 +194,8 @@ if __name__ == '__main__':
     elif sys.argv[1] == "q":
         run_args['query'] = " ".join(sys.argv[2:])
     else:
-        run_args = utils.get_run_info(sys.argv)
-        run_args['query'] = utils.get_query(run_args['command'], run_args['error'])
+        run_args = get_run_info(sys.argv)
+        run_args['query'] = get_query(run_args['command'], run_args['error'])
     while True:
         try:
             run(run_args)

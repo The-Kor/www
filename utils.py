@@ -1,7 +1,10 @@
 import os
 import re
+from utils_objects import Site
 
 max_results_per_site = 5
+
+sites_to_search = [Site.SOF]
 
 
 def is_not_warning_filter(txt):
@@ -96,3 +99,20 @@ def strip_string(string):
     '''
     return re.sub("[\r\n\t\s]*\n[\r\n\t\s]*\n[\r\n\t\s]*", "\n\n", string.strip("[ \t\n\r]"))
     # return string.strip("[ \t\n\r]")
+
+
+def get_parser_class_by_link(link):
+    """
+    Returns the parser class that matches the given link, if the link does not match parser -returns None
+    """
+    for site in sites_to_search:
+        if site.value.url in link:
+            return site.value.parser
+    return None
+
+
+def is_supported_link(link):
+    for site in sites_to_search:
+        if site.value.url in link:
+            return True
+    return False
