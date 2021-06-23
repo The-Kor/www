@@ -9,34 +9,23 @@ from utils import max_results_per_site, strip_string
 
 class SOFParser(Parser):
     site_url = "stackoverflow.com"
+    required_path_elements = ['questions']
 
-    def parse_links(self, links):
+    @staticmethod
+    def parse_thread(soup_obj, url):
         """
-        A generator that yields a Thread instance for every link in the given list
+        Parses a given soup instance to Thread instance
         """
-        # parse sof links
-        links_counter = 0
-        for link in links:
-            links_counter += 1
-            parsed_thread = self.parse_link(link)
-            if parsed_thread:
-                yield parsed_thread
-            if links_counter >= max_results_per_site:
-                break
-
-    def parse_link(self, link):
-        """
-        Parses a link to Thread instance
-        """
-        if not SOFParser.is_valid_link(link):
-            return None
-        page = requests.get(link)
-        soup_obj = BeautifulSoup(page.content, 'html.parser')
-        question = self.parse_question(soup_obj)
+        question = SOFParser.parse_question(soup_obj)
         if not question:
             return None
-        answers = self.parse_answers(soup_obj)
-        return Thread(self.site_url, link, question, answers)
+        answers = SOFParser.parse_answers(soup_obj)
+        return Thread(SOFParser.site_url, url, question, answers)
+
+    @staticmethod
+    def parse_title(soup_obj):
+        title_div = soup_obj.find('div', {"id": "question-header"})
+        return strip_string(title_div.getText())
 
     @staticmethod
     def is_valid_link(link):
@@ -45,7 +34,8 @@ class SOFParser(Parser):
         """
         return 'stackoverflow.com' in link
 
-    def parse_question_attributes(self, soup_obj):
+    @staticmethod
+    def parse_question_attributes(soup_obj):
         """
         Parses the question attributes according to a dict
         """
@@ -59,7 +49,8 @@ class SOFParser(Parser):
             attributes[key] = strip_string(part.getText().replace(key, ""))
         return attributes
 
-    def parse_answers(self, soup_obj):
+    @staticmethod
+    def parse_answers(soup_obj):
         """
         Parses all of the answers from the given soup object and returns them in a list
         """
@@ -76,11 +67,12 @@ class SOFParser(Parser):
             answers.append(Answer(id, answer_data, attr))
         return answers
 
-    def parse_question(self, soup_obj):
+    @staticmethod
+    def parse_question(soup_obj):
         """
         Parses a question object from the given soup object
         """
-        attributes = self.parse_question_attributes(soup_obj)
+        attributes = SOFParser.parse_question_attributes(soup_obj)
         if not attributes:
             return None
         question_title = soup_obj.find(id="question-header").find("h1").getText()
