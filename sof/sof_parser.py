@@ -28,13 +28,6 @@ class SOFParser(Parser):
         return strip_string(title_div.getText())
 
     @staticmethod
-    def is_valid_link(link):
-        """
-        Checks that the given link is a link that suits the parser
-        """
-        return 'stackoverflow.com' in link
-
-    @staticmethod
     def parse_question_attributes(soup_obj):
         """
         Parses the question attributes according to a dict
