@@ -7,6 +7,7 @@ max_results_per_site = 5
 # group(0) -> 'http://www.stackoverflow.com'
 url_pattern = re.compile("^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)")
 
+
 def is_not_warning_filter(txt):
     '''
     check if txt is a line starting with 'warning'
@@ -98,16 +99,17 @@ def strip_string(string):
     Normalizing a "paragraph" string
     '''
     return re.sub("[\r\n\t\s]*\n[\r\n\t\s]*\n[\r\n\t\s]*", "\n\n", string.strip("[ \t\n\r]"))
-    # return string.strip("[ \t\n\r]")
 
 
-def is_link_of_site(link, site_name):
+def is_link_of_parser(link, parser):
     '''
     :param link: a full link url
-    :param site_name: name of site (ex: 'github.com')
-    :return: True is the link is of this site, False otherwise
+    :param parser: a parser object to check
+    :return: True is the link is of this site and has all the required_path_elements of the given parser, False otherwise
     '''
-    return site_name in url_pattern.match(link).group(0)
+    link_path_elements = link.split("/")
+    return parser.site_url in url_pattern.match(link).group(0) and all(
+        [element in link_path_elements for element in parser.required_path_elements])
 
 
 def get_parser_of_link(link, parsers):
@@ -117,6 +119,6 @@ def get_parser_of_link(link, parsers):
     :return: the parser from the list matches this link, None if no parser matches
     '''
     for parser in parsers:
-        if is_link_of_site(link, parser.site_url):
+        if is_link_of_parser(link, parser):
             return parser
     return None
