@@ -7,7 +7,7 @@ from termcolor import colored
 # from parser_factory import ParserFactory
 from terminal_printer import TerminalPrinter
 from utils import build_google_link, \
-    get_run_info, get_query, get_parser_of_link, is_link_of_site
+    get_run_info, get_query, get_parser_of_link
 # from utils_objects import Site
 from utils_objects import Thread
 from collections import OrderedDict
@@ -17,13 +17,15 @@ from sof.sof_parser import SOFParser
 max_num_of_results = 20
 parsers = [SOFParser]
 
+
 def print_thread_by_index(cur_thread_idx, links_dict):
     """
     This function gets the ordered links_dict and a specific idx and prints the question
     of the Thread and the first answer.
     :return: The next answer index of the given Thread's index.
     """
-    curr_thread = links_dict.items()[cur_thread_idx][1]
+
+    curr_thread = list(links_dict.values())[cur_thread_idx].get_thread()
     TerminalPrinter.print_question(curr_thread)
     answer_idx = 0
     if menu_next_answer_in_thread(curr_thread, answer_idx):
@@ -82,9 +84,9 @@ def get_links_by_query(query):
     search_generator = search(query_to_search)
     links_dict = OrderedDict()
     while len(links_dict) < max_num_of_results:
-        cur_link = next(search_generator)
-        if not cur_link:
-            # Generator is out of links, break the outer while
+        try:
+            cur_link = next(search_generator)
+        except StopIteration:
             break
         parser = get_parser_of_link(cur_link, parsers)
         if parser:
@@ -116,15 +118,12 @@ def run(run_args):
     """
     Runs the main menu loop according to the given run_args dict
     """
-    # site_parsers = ParserFactory.generate_parser_objects(sites_to_search)
     query = run_args['query']
-    ############
     cur_thread_idx = None
     answer_idx = 0
     titles_idx_range = range(0, 5)  # TODO 5 SHOULD BE CONST
     links_dict = get_links_by_query(query)
     TerminalPrinter.print_titles(links_dict, titles_idx_range)  # Print instructions for thread selection
-    ########
     while True:
         user_input = input(colored("please choose next action (input {} for help)", "green").format("'h'"))
         if user_input == "h":
@@ -133,7 +132,7 @@ def run(run_args):
             if cur_thread_idx is None:
                 TerminalPrinter.print_no_thead_selected()
                 continue
-            curr_thread = links_dict.items()[cur_thread_idx][1]
+            curr_thread = list(links_dict.values())[cur_thread_idx].get_thread()
             if menu_next_answer_in_thread(curr_thread, answer_idx):
                 answer_idx += 1
             else:
@@ -157,6 +156,8 @@ def run(run_args):
             if cur_thread_idx > 0:
                 cur_thread_idx -= 1
                 answer_idx = print_thread_by_index(cur_thread_idx, links_dict)
+            elif cur_thread_idx == 0:
+                print("No previous thread to show")
             else:
                 print("No more threads for this query..\nEnter 'e' to edit your query")
         elif user_input == "n":
@@ -169,7 +170,7 @@ def run(run_args):
             if cur_thread_idx is None:
                 TerminalPrinter.print_no_thead_selected()
                 continue
-            curr_thread = links_dict.items()[cur_thread_idx][1]
+            curr_thread = list(links_dict.values())[cur_thread_idx]
             menu_open_answer_in_web(curr_thread)
         elif user_input == "g":
             menu_open_google_in_web(query)
