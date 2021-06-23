@@ -68,7 +68,8 @@ class TerminalPrinter:
 
     @staticmethod
     def print_titles(links_dict, titles_idx_range):
-        pass
+        print(colored("Select a thread by inputting the thread's index", "yellow", attrs=["bold"]))
+        print("\n".join(["{} - {}".format(i, list(links_dict.values())[i].get_title()) for i in titles_idx_range]))
 
     @staticmethod
     def print_help_menu():
