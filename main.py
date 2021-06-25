@@ -163,6 +163,8 @@ def run(run_args):
         elif user_input == "p":
             # Implement threads range navigation (change the current range to previous one)
             pass
+        elif user_input == "r":
+            TerminalPrinter.print_titles(results, titles_idx_range)
         elif user_input == "o":
             if cur_thread_idx is None:
                 TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
