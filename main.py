@@ -58,37 +58,32 @@ def menu_open_google_in_web(query):
     """
     Opens the google search page on the given query in the user's browsers
     """
-    webbrowser.open(build_google_link(query))
+    webbrowser.open(build_google_link(query, max_num_of_results))
 
 
 def get_links_generator(sites_str, query):
     """
-    Return a generator of results(Threads) of the given site to the given query
+    Return a list of results(Tuples of link,title) of the given site string to the given query
     """
     query = "site: {} {}".format(sites_str, query)
     TerminalPrinter.print_query(query)
-    search_generator = run_search(query)
-    return search_generator
+    search_results = run_search(query, parsers, max_num_of_results)
+    return search_results
 
 
 def get_results(query):
     """
     This function builds a query to search from the given query and the site_to_search urls.
-    The function runs google search on the query and takes up to max_num_of_results links from the generator.
-    Each link is added to orderedDict and initialized with empty Result instance.
-    :return: Ordered dict with links as keys and Result instances as value
+    The function runs google search on the query and takes up to max_num_of_results links from the outputted list.
+    Each tuple is converted into a Result instance.
     """
     sites_str = "|".join([parser.site_url for parser in parsers])
-    search_generator = get_links_generator(sites_str, query)
+    results_tuples = get_links_generator(sites_str, query)
     results = []
-    while len(results) < max_num_of_results:
-        try:
-            cur_link, link_title = next(search_generator)
-        except StopIteration:
-            break
+    for cur_link, cur_link_title in results_tuples:
         parser = get_parser_of_link(cur_link, parsers)
         if parser:
-            results.append(Result(cur_link, parser, link_title))
+            results.append(Result(cur_link, parser, cur_link_title))
     return results
 
 
@@ -121,7 +116,7 @@ def move_range_up(curr_range, results_len):
 
 def move_range_down(curr_range, results_len):
     old_low = list(curr_range)[0]
-    new_low = max(0, old_low-RANGE_LEN)
+    new_low = max(0, old_low - RANGE_LEN)
     new_high = min(results_len, new_low + RANGE_LEN)
     return range(new_low, new_high)
 

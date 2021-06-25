@@ -86,12 +86,13 @@ def get_query(cmd, error):
     return query
 
 
-def build_google_link(query):
+def build_google_link(query, max_num_of_results):
     '''
-    returns the pre-searched google link for the given query
+    returns the pre-searched google link for the given query,
+    with max number of results in the output page of the given number
     '''
     template = "http://www.google.com/search?q="
-    return template + query.replace(" ", "+")
+    return template + query.replace(" ", "+") + "&num={}".format(max_num_of_results)
 
 
 def strip_string(string):
@@ -101,6 +102,12 @@ def strip_string(string):
     return re.sub("[\r\n\t\s]*\n[\r\n\t\s]*\n[\r\n\t\s]*", "\n\n", string.strip("[ \t\n\r]"))
 
 
+def is_link_supported(link, parsers):
+    if link:
+        return any([is_link_of_parser(link, p) for p in parsers])
+    return False
+
+
 def is_link_of_parser(link, parser):
     '''
     :param link: a full link url
@@ -108,8 +115,10 @@ def is_link_of_parser(link, parser):
     :return: True is the link is of this site and has all the required_path_elements of the given parser, False otherwise
     '''
     link_path_elements = link.split("/")
-    return parser.site_url in url_pattern.match(link).group(0) and all(
-        [element in link_path_elements for element in parser.required_path_elements])
+    link_regex_match = url_pattern.match(link)
+    if link_regex_match:
+        return parser.site_url in url_pattern.match(link).group(0) and all(
+            [element in link_path_elements for element in parser.required_path_elements])
 
 
 def get_parser_of_link(link, parsers):
