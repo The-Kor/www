@@ -186,8 +186,8 @@ def run(run_args):
             if cur_thread_idx is None:
                 TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
                 continue
-            curr_thread = results[cur_thread_idx]
-            menu_open_answer_in_web(curr_thread)
+            curr_result = results[cur_thread_idx]
+            menu_open_answer_in_web(curr_result.get_thread())
         elif user_input == "g":
             menu_open_google_in_web(query)
         elif user_input == "cmd":
