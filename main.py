@@ -12,6 +12,7 @@ from result import Result
 from sof.sof_parser import SOFParser
 
 NO_THREAD_SELECTED_MSG = "No thread selected. please choose a thread before executing this operation"
+RANGE_LEN = 5
 max_num_of_results = 20
 parsers = [SOFParser]
 
@@ -111,6 +112,20 @@ def menu_update_query(run_args):
     run_args['query'] = get_query(run_args['command'], run_args['error'])
 
 
+def move_range_up(curr_range, results_len):
+    old_low = list(curr_range)[0]
+    new_low = old_low + RANGE_LEN if old_low + RANGE_LEN < results_len else old_low
+    new_high = min(results_len, new_low + RANGE_LEN)
+    return range(new_low, new_high)
+
+
+def move_range_down(curr_range, results_len):
+    old_low = list(curr_range)[0]
+    new_low = max(0, old_low-RANGE_LEN)
+    new_high = min(results_len, new_low + RANGE_LEN)
+    return range(new_low, new_high)
+
+
 def run(run_args):
     """
     Runs the main menu loop according to the given run_args dict
@@ -118,8 +133,8 @@ def run(run_args):
     query = run_args['query']
     cur_thread_idx = None
     answer_idx = 0
-    titles_idx_range = range(0, 5)  # TODO 5 SHOULD BE CONST
     results = get_results(query)
+    titles_idx_range = range(0, min(RANGE_LEN, len(results)))
     TerminalPrinter.print_titles(results, titles_idx_range)  # Print instructions for thread selection
     while True:
         user_input = input(colored("please choose next action (input {} for help)", "green").format("'h'"))
@@ -158,10 +173,12 @@ def run(run_args):
             else:
                 print("No more threads for this query..\nEnter 'e' to edit your query")
         elif user_input == "n":
-            # Implement threads range navigation (change the current range to next one)
+            titles_idx_range = move_range_up(titles_idx_range, len(results))
+            TerminalPrinter.print_titles(results, titles_idx_range)
             pass
         elif user_input == "p":
-            # Implement threads range navigation (change the current range to previous one)
+            titles_idx_range = move_range_down(titles_idx_range, len(results))
+            TerminalPrinter.print_titles(results, titles_idx_range)
             pass
         elif user_input == "r":
             TerminalPrinter.print_titles(results, titles_idx_range)
