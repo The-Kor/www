@@ -1,11 +1,14 @@
-from enum import Enum
 from collections import namedtuple
+# from enum import Enum
 
-SiteInfo = namedtuple("SiteInfo", ["rank", "url"])
+# from sof.sof_parser import SOFParser
 
-class Site(Enum):
-    SOF = SiteInfo(0, "stackoverflow.com")
-    GITHUB = SiteInfo(1, "github.com")
+# SiteInfo = namedtuple("SiteInfo", ["rank", "parser"])
+#
+#
+# class Site(Enum):
+#     SOF = SiteInfo(0, SOFParser)
+#     GITHUB = SiteInfo(1, None)  # TODO enter GitHub parser
 
 
 Thread = namedtuple("Thread", ["site", "url", "question", "answers"])

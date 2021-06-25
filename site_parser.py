@@ -1,6 +1,11 @@
-from utils_objects import Thread
-
-
 class Parser:
-    def parse_links(self, links) -> Thread:
+    site_url = ""
+    required_path_elements = []
+
+    @staticmethod
+    def parse_thread(soup_obj, url):
+        pass
+
+    @staticmethod
+    def parse_title(soup_obj):
         pass

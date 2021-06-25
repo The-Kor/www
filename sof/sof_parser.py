@@ -1,52 +1,34 @@
-import utils
 from site_parser import Parser
-from utils_objects import Thread, Site
 import requests
 from bs4 import BeautifulSoup
 from question import *
 from answer import *
+from utils_objects import Thread
+from utils import max_results_per_site, strip_string
 
 
 class SOFParser(Parser):
-    site = Site.SOF
-    site_url = site.value.url
-
-    def parse_links(self, links) -> Thread:
-        """
-        A generator that yields a Thread instance for every link in the given list
-        """
-        # parse sof links
-        links_counter = 0
-        for link in links:
-            links_counter += 1
-            parsed_thread = self.parse_link(link)
-            if parsed_thread:
-                yield parsed_thread
-            if links_counter >= utils.max_results_per_site:
-                break
-
-    def parse_link(self, link):
-        """
-        Parses a link to Thread instance
-        """
-        if not SOFParser.is_valid_link(link):
-            return None
-        page = requests.get(link)
-        soup_obj = BeautifulSoup(page.content, 'html.parser')
-        question = self.parse_question(soup_obj)
-        if not question:
-            return None
-        answers = self.parse_answers(soup_obj)
-        return Thread(self.site_url, link, question, answers)
+    site_url = "stackoverflow.com"
+    required_path_elements = ['questions']
 
     @staticmethod
-    def is_valid_link(link):
+    def parse_thread(soup_obj, url):
         """
-        Checks that the given link is a link that suits the parser
+        Parses a given soup instance to Thread instance
         """
-        return 'stackoverflow.com' in link
+        question = SOFParser.parse_question(soup_obj)
+        if not question:
+            return None
+        answers = SOFParser.parse_answers(soup_obj)
+        return Thread(SOFParser.site_url, url, question, answers)
 
-    def parse_question_attributes(self, soup_obj):
+    @staticmethod
+    def parse_title(soup_obj):
+        title_div = soup_obj.find('div', {"id": "question-header"})
+        return strip_string(title_div.getText())
+
+    @staticmethod
+    def parse_question_attributes(soup_obj):
         """
         Parses the question attributes according to a dict
         """
@@ -56,11 +38,12 @@ class SOFParser(Parser):
             return None
         question_attr_parts = question_attr_div.find_all("div")
         for part in question_attr_parts:
-            key = utils.strip_string(part.find("span").getText())
-            attributes[key] = utils.strip_string(part.getText().replace(key, ""))
+            key = strip_string(part.find("span").getText())
+            attributes[key] = strip_string(part.getText().replace(key, ""))
         return attributes
 
-    def parse_answers(self, soup_obj):
+    @staticmethod
+    def parse_answers(soup_obj):
         """
         Parses all of the answers from the given soup object and returns them in a list
         """
@@ -73,22 +56,23 @@ class SOFParser(Parser):
             answer_data = ""
             for part in answer_parts:
                 answer_data += part.getText()
-            answer_data = utils.strip_string(answer_data)
+            answer_data = strip_string(answer_data)
             answers.append(Answer(id, answer_data, attr))
         return answers
 
-    def parse_question(self, soup_obj):
+    @staticmethod
+    def parse_question(soup_obj):
         """
         Parses a question object from the given soup object
         """
-        attributes = self.parse_question_attributes(soup_obj)
+        attributes = SOFParser.parse_question_attributes(soup_obj)
         if not attributes:
             return None
         question_title = soup_obj.find(id="question-header").find("h1").getText()
         question_div = soup_obj.find("div", {"class": "question"})
         attributes['score'] = question_div.get("data-score")
         question_parts = question_div.find_all("div", {"class": "s-prose js-post-body"})
-        question_data = utils.strip_string("".join([q.getText() for q in question_parts]))
+        question_data = strip_string("".join([q.getText() for q in question_parts]))
 
         question = Question(question_title, question_data, attributes)
         return question
