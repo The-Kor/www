@@ -63,8 +63,8 @@ class TerminalPrinter:
         print(colored("*" * 100, "grey", attrs=["bold"]))
 
     @staticmethod
-    def print_no_thead_selected():
-        pass
+    def print_error(msg):
+        print(colored(msg, "red"))
 
     @staticmethod
     def print_titles(results, titles_idx_range):

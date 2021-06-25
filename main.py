@@ -11,6 +11,7 @@ from utils_objects import Thread
 from result import Result
 from sof.sof_parser import SOFParser
 
+NO_THREAD_SELECTED_MSG = "No thread selected. please choose a thread before executing this operation"
 max_num_of_results = 20
 parsers = [SOFParser]
 
@@ -126,7 +127,7 @@ def run(run_args):
             TerminalPrinter.print_help_menu()
         elif user_input == "na":
             if cur_thread_idx is None:
-                TerminalPrinter.print_no_thead_selected()
+                TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
                 continue
             curr_thread = results[cur_thread_idx].get_thread()
             if menu_next_answer_in_thread(curr_thread, answer_idx):
@@ -138,7 +139,7 @@ def run(run_args):
             answer_idx = print_thread_by_index(cur_thread_idx, results)
         elif user_input == "nt":
             if cur_thread_idx is None:
-                TerminalPrinter.print_no_thead_selected()
+                TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
                 continue
             if cur_thread_idx < len(results) - 1:
                 cur_thread_idx += 1
@@ -147,7 +148,7 @@ def run(run_args):
                 print("No more threads for this query..\nEnter 'e' to edit your query")
         elif user_input == "pt":
             if cur_thread_idx is None:
-                TerminalPrinter.print_no_thead_selected()
+                TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
                 continue
             if cur_thread_idx > 0:
                 cur_thread_idx -= 1
@@ -164,7 +165,7 @@ def run(run_args):
             pass
         elif user_input == "o":
             if cur_thread_idx is None:
-                TerminalPrinter.print_no_thead_selected()
+                TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
                 continue
             curr_thread = results[cur_thread_idx]
             menu_open_answer_in_web(curr_thread)
@@ -180,7 +181,7 @@ def run(run_args):
         elif user_input.startswith("x"):
             sys.exit()
         else:
-            print("Invalid input")
+            TerminalPrinter.print_error("Invalid input")
 
 
 if __name__ == '__main__':
