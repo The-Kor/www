@@ -22,7 +22,3 @@ def run_search(query):
             a = inner_bs.find('a')
             h3 = inner_bs.find('h3')
             yield strip_url(a['href']), h3.get_text()
-
-# s = run_search("site: stackoverflow.com how to compile java packages")
-# for i, r in enumerate(s):
-#     print(i, r)
