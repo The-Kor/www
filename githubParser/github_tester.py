@@ -55,6 +55,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(thread2.question.attributes["date"], "May 14, 2021")
 
     def test_parse_answers(self):
+        # Dynamic: can and should be changed at the repository, manuel changes will be required:
         self.assertEqual(len(thread1.answers), 1)
         self.assertEqual(len(thread2.answers), 12)
         self.assertEqual(len(thread3.answers), 1)
@@ -63,6 +64,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(None, thread3.answers[0].data)
 
     def test_parse_title(self):
+        # Dynamic: can and should be changed at the repository, manuel changes will be required:
         self.assertEqual(thread1.question.title, '"No training configuration found in the save file"')
         self.assertEqual(thread2.question.title, 'Problem with idenprof!')
         self.assertEqual(thread3.question.title, 'Permanently delete parser_factory')
