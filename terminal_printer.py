@@ -63,21 +63,25 @@ class TerminalPrinter:
         print(colored("*" * 100, "grey", attrs=["bold"]))
 
     @staticmethod
-    def print_no_thead_selected():
-        pass
+    def print_error(msg):
+        print(colored(msg, "red"))
 
     @staticmethod
-    def print_titles(links_dict, titles_idx_range):
+    def print_titles(results, titles_idx_range):
         print(colored("Select a thread by inputting the thread's index", "yellow", attrs=["bold"]))
-        print("\n".join(["{} - {}".format(i, list(links_dict.values())[i].get_title()) for i in titles_idx_range]))
+        print("\n".join(["{} - {}".format(i, results[i].get_title()) for i in titles_idx_range]))
 
     @staticmethod
     def print_help_menu():
         """
         Prints the help menu
         """
+        print("{} - next results page".format(colored("n", "green")))
+        print("{} - previous results page".format(colored("p", "green")))
+        print("{} - show current results page".format(colored("r", "green")))
         print("{} - next answer in thread".format(colored("na", "green")))
-        print("{} - next thread".format(colored("n", "green")))
+        print("{} - next thread".format(colored("nt", "green")))
+        print("{} - previous thread".format(colored("pt", "green")))
         print("{} - open Google in browser".format(colored("g", "green")))
         print("{} - open current thread in browser".format(colored("o", "green")))
         print("{} - show searched command".format(colored("cmd", "green")))
