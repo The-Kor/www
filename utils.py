@@ -103,6 +103,11 @@ def strip_string(string):
 
 
 def is_link_supported(link, parsers):
+    '''
+    :param link: a link (url)
+    :param parsers: the parsers
+    :return: true if the link is supported by any parser, false otherwise
+    '''
     if link:
         return any([is_link_of_parser(link, p) for p in parsers])
     return False

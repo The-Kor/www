@@ -108,6 +108,11 @@ def menu_update_query(run_args):
 
 
 def move_range_up(curr_range, results_len):
+    '''
+    :param curr_range: the current range of the printed results
+    :param results_len: the length of the results' list
+    :return: the next results' chunk range
+    '''
     old_low = list(curr_range)[0]
     new_low = old_low + RANGE_LEN if old_low + RANGE_LEN < results_len else old_low
     new_high = min(results_len, new_low + RANGE_LEN)
@@ -115,6 +120,11 @@ def move_range_up(curr_range, results_len):
 
 
 def move_range_down(curr_range, results_len):
+    '''
+    :param curr_range: the current range of the printed results
+    :param results_len: the length of the results' list
+    :return: the previous results' chunk range
+    '''
     old_low = list(curr_range)[0]
     new_low = max(0, old_low - RANGE_LEN)
     new_high = min(results_len, new_low + RANGE_LEN)

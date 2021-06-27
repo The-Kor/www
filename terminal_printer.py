@@ -64,10 +64,19 @@ class TerminalPrinter:
 
     @staticmethod
     def print_error(msg):
+        '''
+        prints an error message
+        :param msg: the message to print
+        '''
         print(colored(msg, "red"))
 
     @staticmethod
     def print_titles(results, titles_idx_range):
+        '''
+        prints the titles of the results in the given range
+        :param results: the results list
+        :param titles_idx_range: the range to print
+        '''
         print(colored("Select a thread by inputting the thread's index", "yellow", attrs=["bold"]))
         print("\n".join(["{} - {}".format(i, results[i].get_title()) for i in titles_idx_range]))
 
