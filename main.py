@@ -13,9 +13,10 @@ from utils_objects import Thread
 from collections import OrderedDict
 from result import Result
 from sof.sof_parser import SOFParser
+from githubParser.github_parser import GITHUBParser
 
 max_num_of_results = 20
-parsers = [SOFParser]
+parsers = [SOFParser, GITHUBParser]
 
 
 def print_thread_by_index(cur_thread_idx, links_dict):
