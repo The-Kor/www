@@ -60,8 +60,9 @@ class GITHUBParser(Parser):
         for i, answer in enumerate(answer_parts):
             answer_data = answer.find("p")
             if answer_data:
-                answer_data = answer_data.getText()
-            answers.append(Answer(i, answer_data, None))
+                answer_text = answer_data.getText()
+                if answer_text:
+                    answers.append(Answer(i, answer_data, None))
         # if answer_data no comment has published yet
         return answers
 
