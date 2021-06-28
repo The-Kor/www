@@ -12,17 +12,17 @@ parsers = [SOFParser, GITHUBParser]
 links_dict = OrderedDict()
 link1 = 'https://stackoverflow.com/questions/379906/how-do-i-parse-a-string-to-a-float-or-int'
 parser = get_parser_of_link(link1, parsers)
-links_dict[link1] = Result(link1, parser)
+links_dict[link1] = Result(link1, parser, 'How do I parse a string to a float or int?')
 thread1 = links_dict[link1].get_thread()
 
 link2 = 'https://stackoverflow.com/questions/11902458/i-want-to-exception-handle-list-index-out-of-range/11902480'
 parser = get_parser_of_link(link2, parsers)
-links_dict[link2] = Result(link2, parser)
+links_dict[link2] = Result(link2, parser, 'I want to exception handle \'list index out of range.\'')
 thread2 = links_dict[link2].get_thread()
 
 link3 = 'https://stackoverflow.com/questions/40744216/exit-python-program-if-data-directory-is-empty?noredirect=1&lq=1'
 parser = get_parser_of_link(link3, parsers)
-links_dict[link3] = Result(link3, parser)
+links_dict[link3] = Result(link3, parser, 'Exit Python program if data directory is empty')
 thread3 = links_dict[link3].get_thread()
 link4 = ""
 
