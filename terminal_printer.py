@@ -41,10 +41,11 @@ class TerminalPrinter:
         Prints the answer's metadata and data
         """
         print(colored("Answer {}: ".format(answer.id + 1), "yellow", attrs=["bold"]))
-        print(tabulate.tabulate(
-            [["{}: {}".format(colored(k, 'yellow'), colored(v, "magenta", attrs=["bold"])) for k, v
-              in
-              answer.attributes.items()]], tablefmt="pretty"))
+        if answer.attributes:
+            print(tabulate.tabulate(
+                [["{}: {}".format(colored(k, 'yellow'), colored(v, "magenta", attrs=["bold"])) for k, v
+                  in
+                  answer.attributes.items()]], tablefmt="pretty"))
         print(answer.data)
         TerminalPrinter.print_answers_separator()
 
