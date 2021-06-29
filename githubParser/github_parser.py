@@ -55,11 +55,14 @@ class GITHUBParser(Parser):
                                             {"class": "js-timeline-item js-timeline-progressive-focus-container"})
         if not answer_parts:
             return None
-        for i, answer in enumerate(answer_parts):
+        answer_idx = 0
+        for answer in answer_parts:
             answer_data = answer.find("p")
             if answer_data:
-                answer_data = answer_data.getText()
-            answers.append(Answer(i, answer_data, None))
+                answer_str = answer_data.getText()
+                if answer_str:
+                    answers.append(Answer(answer_idx, answer_str, None))
+                    answer_idx += 1
         # if answer_data no comment has published yet
         return answers
 
@@ -68,6 +71,7 @@ class GITHUBParser(Parser):
         """
         Parses a question object from the given soup object
         """
+
         def set_attributes():
             result = {}
             if "Open" in attributes.keys():
@@ -94,6 +98,8 @@ class GITHUBParser(Parser):
         """
         Checks that the given link is a link that suits the parser
         """
+
         def is_issue() -> bool:
             return link.split("/")[-2] == "issues"
+
         return 'github.com' in link and is_issue()
