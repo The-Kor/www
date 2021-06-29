@@ -82,6 +82,13 @@ class TerminalPrinter:
         print("\n".join(["{} - {}".format(i, results[i].get_title()) for i in titles_idx_range]))
 
     @staticmethod
+    def print_no_more_answers_message():
+        """
+        Printing a message that indicated that the current threads has no more answers
+        """
+        print("No more answers for this thread\nEnter 'n' to see the next Thread titles")
+
+    @staticmethod
     def print_help_menu():
         """
         Prints the help menu

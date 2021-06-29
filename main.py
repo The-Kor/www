@@ -10,11 +10,12 @@ from utils import build_google_link, \
 from utils_objects import Thread
 from result import Result
 from sof.sof_parser import SOFParser
+from githubParser.github_parser import GITHUBParser
 
 NO_THREAD_SELECTED_MSG = "No thread selected. please choose a thread before executing this operation"
 RANGE_LEN = 5
 max_num_of_results = 20
-parsers = [SOFParser]
+parsers = [SOFParser, GITHUBParser]
 
 
 def print_thread_by_index(cur_thread_idx, results):
@@ -30,7 +31,7 @@ def print_thread_by_index(cur_thread_idx, results):
     if menu_next_answer_in_thread(curr_thread, answer_idx):
         answer_idx += 1
     else:
-        print("No more answers in this thread..\nEnter 'n' for next thread")
+        TerminalPrinter.print_no_more_answers_message()
     return answer_idx
 
 
@@ -153,7 +154,7 @@ def run(run_args):
             if menu_next_answer_in_thread(curr_thread, answer_idx):
                 answer_idx += 1
             else:
-                print("No more answers in this thread..\nEnter 'n' for next thread")
+                TerminalPrinter.print_no_more_answers_message()
         elif user_input.isnumeric() and int(user_input) in range(len(results)):
             cur_thread_idx = int(user_input)
             answer_idx = print_thread_by_index(cur_thread_idx, results)
@@ -165,7 +166,7 @@ def run(run_args):
                 cur_thread_idx += 1
                 answer_idx = print_thread_by_index(cur_thread_idx, results)
             else:
-                print("No more threads for this query..\nEnter 'e' to edit your query")
+                TerminalPrinter.print_no_more_answers_message()
         elif user_input == "pt":
             if cur_thread_idx is None:
                 TerminalPrinter.print_error(NO_THREAD_SELECTED_MSG)
@@ -176,7 +177,7 @@ def run(run_args):
             elif cur_thread_idx == 0:
                 print("No previous thread to show")
             else:
-                print("No more threads for this query..\nEnter 'e' to edit your query")
+                TerminalPrinter.print_no_more_answers_message()
         elif user_input == "n":
             titles_idx_range = move_range_up(titles_idx_range, len(results))
             TerminalPrinter.print_titles(results, titles_idx_range)
