@@ -144,7 +144,7 @@ def run(run_args):
                 answer_idx += 1
             else:
                 print("No more answers in this thread..\nEnter 'n' for next thread")
-        elif user_input.isnumeric() and int(user_input) in range(5):
+        elif user_input.isnumeric() and int(user_input) in range(len(results)):
             cur_thread_idx = int(user_input)
             answer_idx = print_thread_by_index(cur_thread_idx, results)
         elif user_input == "nt":
