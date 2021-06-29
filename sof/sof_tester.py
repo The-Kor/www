@@ -37,7 +37,7 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNotNone(links_dict[link1])
         self.assertEqual(thread1.url, link1)
         # Dynamic: can and should be changed at the repository, manuel changes will be required:
-        self.assertEqual(thread1.question.attributes["score"], '2472')
+        self.assertEqual(thread1.question.attributes["score"], '2473')
         self.assertEqual(thread1.question.attributes["Asked"], '12 years, 6 months ago')
         self.assertEqual(thread1.question.attributes["Viewed"], '4.3m times')
         self.assertEqual(thread1.question.attributes["Active"], '8 months ago')
