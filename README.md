@@ -55,7 +55,7 @@ There are mainly 3 ways of running this tool:
 <a name="web_parsing"/>
 
 # Web parsing
-Currently we support only StackOverFlow, adding support to new website can be done by implementing the `Parser` class and updating `parser_factory.py`
+Currently we support StackOverFlow Threads and GitHub Issues, adding support to new website can be done by implementing the `Parser` class (that can be found in site_parser.py) and adding the new implemented class to parsers list in  `main.py`
 
 <a name="contribute"/>
 
