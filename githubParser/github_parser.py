@@ -1,10 +1,8 @@
 from site_parser import Parser
-import requests
-from bs4 import BeautifulSoup
 from question import *
 from answer import *
 from utils_objects import Thread
-from utils import max_results_per_site, strip_string
+from utils import strip_string
 
 
 class GITHUBParser(Parser):
@@ -70,7 +68,6 @@ class GITHUBParser(Parser):
         """
         Parses a question object from the given soup object
         """
-
         def set_attributes():
             result = {}
             if "Open" in attributes.keys():
@@ -97,7 +94,6 @@ class GITHUBParser(Parser):
         """
         Checks that the given link is a link that suits the parser
         """
-
         def is_issue() -> bool:
             return link.split("/")[-2] == "issues"
         return 'github.com' in link and is_issue()
