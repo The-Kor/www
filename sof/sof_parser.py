@@ -3,8 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from question import *
 from answer import *
-from utils_objects import Thread
-from utils import max_results_per_site, strip_string
+from result_thread import ResultThread
+from utils import strip_string
 
 
 class SOFParser(Parser):
@@ -20,7 +20,7 @@ class SOFParser(Parser):
         if not question:
             return None
         answers = SOFParser.parse_answers(soup_obj)
-        return Thread(SOFParser.site_url, url, question, answers)
+        return ResultThread(SOFParser.site_url, url, question, answers)
 
     @staticmethod
     def parse_title(soup_obj):

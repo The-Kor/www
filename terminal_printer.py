@@ -1,6 +1,6 @@
 import tabulate
 from termcolor import colored
-from utils_objects import Thread
+from result_thread import ResultThread
 from answer import Answer
 
 
@@ -23,7 +23,7 @@ class TerminalPrinter:
         TerminalPrinter.print_section_separator()
 
     @staticmethod
-    def print_question_metadata(thread: Thread):
+    def print_question_metadata(thread: ResultThread):
         """
         Prints the metadata of the given thread's question in a table form
         """

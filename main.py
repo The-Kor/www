@@ -7,7 +7,7 @@ from termcolor import colored
 from terminal_printer import TerminalPrinter
 from utils import build_google_link, \
     get_run_info, get_query, get_parser_of_link
-from utils_objects import Thread
+from result_thread import ResultThread
 from result import Result
 from sof.sof_parser import SOFParser
 from githubParser.github_parser import GITHUBParser
@@ -45,7 +45,7 @@ def menu_open_answer_in_web(thread):
         print("No more threads for this query, try searching edit the query using 'e'")
 
 
-def menu_next_answer_in_thread(thread: Thread, answer_idx):
+def menu_next_answer_in_thread(thread: ResultThread, answer_idx):
     """
     Prints the next answer in the thread, returns True if such answer exists, other False
     """
@@ -78,7 +78,7 @@ def get_results(query):
     The function runs google search on the query and takes up to max_num_of_results links from the outputted list.
     Each tuple is converted into a Result instance.
     """
-    sites_str = "|".join([parser.site_url for parser in parsers])
+    sites_str = " | ".join([parser.site_url for parser in parsers])
     results_tuples = get_links_generator(sites_str, query)
     results = []
     for cur_link, cur_link_title in results_tuples:

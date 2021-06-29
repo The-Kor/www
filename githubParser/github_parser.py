@@ -1,7 +1,7 @@
 from site_parser import Parser
 from question import *
 from answer import *
-from utils_objects import Thread
+from result_thread import ResultThread
 from utils import strip_string
 
 
@@ -18,7 +18,7 @@ class GITHUBParser(Parser):
         if not question:
             return None
         answers = GITHUBParser.parse_answers(soup_obj)
-        return Thread(GITHUBParser.site_url, url, question, answers)
+        return ResultThread(GITHUBParser.site_url, url, question, answers)
 
     @staticmethod
     def parse_title(soup_obj):

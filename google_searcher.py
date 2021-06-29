@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from bs4.element import Tag, NavigableString
 from utils import build_google_link, is_link_supported
 from collections import OrderedDict
 
@@ -18,11 +19,14 @@ def get_title_of_result_element(soup_tag):
     This function parses a title from a given BeautifulSoup4 tag element of Google result (main/secondary)
     The title can be found in span element with dir="ltr".
     """
-    for child in soup_tag.children:
+    title = ""
+    for child in soup_tag.contents:
         for content_tag in child.contents:
-            if content_tag.get('dir', False) == 'ltr':
-                return child.getText()
-    return ""
+            if type(content_tag) is Tag:
+                title += content_tag.getText()
+            elif type(content_tag) is NavigableString:
+                title += str(content_tag)
+    return title
 
 
 def is_secondary_google_link(soup_tag):
@@ -50,7 +54,7 @@ def run_search(query, parsers, max_num_of_results):
         headers={'User-Agent': CHROME_UA})
     soup_obj = BeautifulSoup(page.content, "html.parser")
     raw_results_tags = soup_obj.find_all('div', attrs={'class': "g"})
-    href_tags = [r.find_all('a', href=True) for r in raw_results_tags]
+    href_tags = [r.find_all_next('a', href=True) for r in raw_results_tags]
     results_tags = {c for h in href_tags for c in h if
                     is_link_supported(c.attrs['href'], parsers) and (
                             is_secondary_google_link(c) or is_main_google_link(c))}
